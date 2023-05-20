@@ -1,8 +1,8 @@
 package com.lyh.redis.lock;
 
 import com.lyh.redislock.config.RedisLockProperties;
+import com.lyh.redislock.config.RedisServerType;
 import com.lyh.redislock.lock.RedisLock;
-import com.lyh.redislock.config.RedisLockProperties.REDIS_SERVER_TYPE;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -36,7 +36,7 @@ public class RedisLockTest {
         redisServer.start();
 
         RedisLockProperties properties = mock(RedisLockProperties.class);
-        when(properties.getServerType()).thenReturn(REDIS_SERVER_TYPE.SINGLE);
+        when(properties.getServerType()).thenReturn(RedisServerType.SINGLE);
         when(properties.getServerAddress()).thenReturn(testServerAddress);
         when(properties.getServerMasterName()).thenReturn("master");
         when(properties.getNamespace()).thenReturn("");

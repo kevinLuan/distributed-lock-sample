@@ -14,6 +14,7 @@ import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings("UnstableApiUsage")
@@ -30,29 +31,24 @@ public class ZookeeperLock implements Lock {
     public ZookeeperLock(ZookeeperProperties properties) {
         String lockNamespace = properties.getNamespace();
         RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);
-        client =
-                CuratorFrameworkFactory.newClient(
-                        properties.getConnectionString(),
-                        (int) properties.getSessionTimeout().toMillis(),
-                        (int) properties.getConnectionTimeout().toMillis(),
-                        retryPolicy);
+        client = CuratorFrameworkFactory.newClient(
+                properties.getConnectionString(),
+                (int) properties.getSessionTimeout().toMillis(),
+                (int) properties.getConnectionTimeout().toMillis(),
+                retryPolicy);
         client.start();
         zkLocks =
                 CacheBuilder.newBuilder()
                         .maximumSize(CACHE_MAXSIZE)
                         .expireAfterAccess(CACHE_EXPIRY_TIME, TimeUnit.MINUTES)
-                        .build(
-                                new CacheLoader<String, InterProcessMutex>() {
-                                    @Override
-                                    public InterProcessMutex load(String key) {
-                                        return new InterProcessMutex(client, zkPath.concat(key));
-                                    }
-                                });
+                        .build(new CacheLoader<String, InterProcessMutex>() {
+                            @Override
+                            public InterProcessMutex load(String key) {
+                                return new InterProcessMutex(client, zkPath.concat(key));
+                            }
+                        });
 
-        zkPath =
-                StringUtils.isEmpty(lockNamespace)
-                        ? ("/conductor/")
-                        : ("/conductor/" + lockNamespace + "/");
+        zkPath = StringUtils.isNotBlank(lockNamespace) ? lockNamespace : "/distributed/lock/";
     }
 
     public void acquireLock(String lockId) {
@@ -63,7 +59,7 @@ public class ZookeeperLock implements Lock {
             InterProcessMutex mutex = zkLocks.get(lockId);
             mutex.acquire();
         } catch (Exception e) {
-            LOGGER.debug("Failed in acquireLock: ", e);
+            LOGGER.error("Failed in acquireLock: ", e);
         }
     }
 
@@ -75,7 +71,7 @@ public class ZookeeperLock implements Lock {
             InterProcessMutex mutex = zkLocks.get(lockId);
             return mutex.acquire(timeToTry, unit);
         } catch (Exception e) {
-            LOGGER.debug("Failed in acquireLock: ", e);
+            LOGGER.error("Failed in acquireLock: ", e);
         }
         return false;
     }
@@ -94,16 +90,18 @@ public class ZookeeperLock implements Lock {
                 lock.release();
             }
         } catch (Exception e) {
-            LOGGER.debug("Failed in releaseLock: ", e);
+            LOGGER.error("Failed in acquireLock: ", e);
         }
     }
 
     public void deleteLock(String lockId) {
         try {
-            LOGGER.debug("Deleting lock {}", zkPath.concat(lockId));
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Deleting lock {}", zkPath.concat(lockId));
+            }
             client.delete().guaranteed().forPath(zkPath.concat(lockId));
         } catch (Exception e) {
-            LOGGER.debug("Failed to removeLock: ", e);
+            LOGGER.error("Failed in acquireLock: ", e);
         }
     }
 }

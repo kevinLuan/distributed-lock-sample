@@ -1,15 +1,3 @@
-/*
- * Copyright 2020 Netflix, Inc.
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- */
 package com.lyh.zookeeper.lock;
 
 import com.lyh.lock.api.Lock;
@@ -45,12 +33,10 @@ public class ZookeeperLockTest {
         properties = mock(ZookeeperProperties.class);
         when(properties.getConnectionString()).thenReturn("localhost:2181");
         when(properties.getSessionTimeout())
-                .thenReturn(
-                        Duration.ofMillis(CuratorFrameworkFactory.builder().getSessionTimeoutMs()));
+                .thenReturn(Duration.ofMillis(CuratorFrameworkFactory.builder().getSessionTimeoutMs()));
         when(properties.getConnectionTimeout())
                 .thenReturn(
-                        Duration.ofMillis(
-                                CuratorFrameworkFactory.builder().getConnectionTimeoutMs()));
+                        Duration.ofMillis(CuratorFrameworkFactory.builder().getConnectionTimeoutMs()));
         when(properties.getNamespace()).thenReturn("");
     }
 
@@ -81,24 +67,24 @@ public class ZookeeperLockTest {
         worker1.start();
         worker1.lockNotify.acquire();
         assertTrue(worker1.isLocked);
-        Thread.sleep(30000);
+        Thread.sleep(2000);
 
         Worker worker2 = new Worker(zkLock, lock1);
         worker2.start();
         assertTrue(worker2.isAlive());
         assertFalse(worker2.isLocked);
-        Thread.sleep(30000);
+        Thread.sleep(2000);
 
         Worker worker3 = new Worker(zkLock, lock2);
         worker3.start();
         worker3.lockNotify.acquire();
         assertTrue(worker3.isLocked);
-        Thread.sleep(30000);
+        Thread.sleep(2000);
 
         worker1.unlockNotify.release();
         worker1.join();
 
-        Thread.sleep(30000);
+        Thread.sleep(2000);
         worker2.lockNotify.acquire();
         assertTrue(worker2.isLocked);
         worker2.unlockNotify.release();

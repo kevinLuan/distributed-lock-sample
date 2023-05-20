@@ -1,15 +1,3 @@
-/*
- * Copyright 2020 Netflix, Inc.
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- */
 package com.lyh.redislock.config;
 
 import com.lyh.lock.api.Lock;
@@ -23,20 +11,18 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import static com.lyh.redislock.config.RedisLockProperties.REDIS_SERVER_TYPE;
-
 import java.util.Arrays;
 
 @Configuration
 @EnableConfigurationProperties(RedisLockProperties.class)
-@ConditionalOnProperty(name = "conductor.workflow-execution-lock.type", havingValue = "redis")
+@ConditionalOnProperty(name = "distributed.lock.type", havingValue = "redis")
 public class RedisLockConfiguration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RedisLockConfiguration.class);
 
     @Bean
     public Redisson getRedisson(RedisLockProperties properties) {
-        RedisLockProperties.REDIS_SERVER_TYPE redisServerType;
+        RedisServerType redisServerType;
         try {
             redisServerType = properties.getServerType();
         } catch (IllegalArgumentException ie) {
@@ -44,7 +30,7 @@ public class RedisLockConfiguration {
                     "Invalid Redis server type: "
                             + properties.getServerType()
                             + ", supported values are: "
-                            + Arrays.toString(REDIS_SERVER_TYPE.values());
+                            + Arrays.toString(RedisServerType.values());
             LOGGER.error(message);
             throw new RuntimeException(message, ie);
         }

@@ -1,7 +1,11 @@
-package com.lyh.redislock.config;/**
- * 
- * 
+package com.lyh.redislock.config;
+
+/**
  * @author SHOUSHEN.LUAN
  * @since 2023-05-20
- */public enum RedisServerType {
+ */
+public enum RedisServerType {
+    SINGLE,
+    CLUSTER,
+    SENTINEL
 }
