@@ -11,10 +11,10 @@
     distributed.lock.type=zookeeper 
     distributed.zookeeper-lock.connectionString=localhost:2181
 
-## 实现本地内存锁
+## 实现本地锁
     distributed.lock.type=local_only
 
-## 演示锁示例
+## 演示示例
 ```java
     @Autowired
     private Lock lock;
