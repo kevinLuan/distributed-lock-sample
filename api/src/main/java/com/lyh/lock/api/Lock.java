@@ -7,10 +7,10 @@ import java.util.concurrent.TimeUnit;
  * <p>A typical usage:
  *
  * <pre>
- *   if (acquireLock(workflowId, 5, TimeUnit.MILLISECONDS)) {
+ *   if (acquireLock(lockId, 5, TimeUnit.MILLISECONDS)) {
  *   // do work
  *   } finally {
- *     releaseLock(workflowId)
+ *     releaseLock(lockId)
  *   }
  * </pre>
  */

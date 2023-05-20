@@ -13,3 +13,18 @@
 
 ## 本地锁
     distributed.lock.type=local_only
+
+## 实现示例
+```java
+    @Autowired
+    private Lock lock;
+
+    public void test() {
+        String lockId = "lockKey";
+        if (lock.acquireLock(lockId, 5, TimeUnit.MILLISECONDS)) {
+           // do work
+        } finally {
+            lock.releaseLock(workflowId)
+        }
+    }
+```
