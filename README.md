@@ -1,30 +1,30 @@
 # 分布式锁实现
 
-## redis
+## redis 实现分布式锁
 
     distributed.lock.type=redis
     distributed.redis-lock.serverAddress=redis://127.0.0.1:6379
     distributed.redis-lock.serverPassword=
 
-## zookeeper
+## zookeeper 实现分布式锁
 
     distributed.lock.type=zookeeper 
     distributed.zookeeper-lock.connectionString=localhost:2181
 
-## 本地锁
+## 实现本地内存锁
     distributed.lock.type=local_only
 
-## 实现示例
+## 演示锁示例
 ```java
     @Autowired
     private Lock lock;
 
     public void test() {
-        String lockId = "lockKey";
+        String lockId = "MyLockId";
         if (lock.acquireLock(lockId, 5, TimeUnit.MILLISECONDS)) {
            // do work
         } finally {
-            lock.releaseLock(workflowId)
+            lock.releaseLock(lockId)
         }
     }
 ```
