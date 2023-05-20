@@ -1,4 +1,4 @@
-package com.lyh.lock.core;
+package com.lyh.zookeeper.lock;
 
 import com.lyh.lock.api.Lock;
 import com.lyh.zookeeper.config.ZookeeperProperties;

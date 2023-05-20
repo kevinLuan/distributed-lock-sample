@@ -1,7 +1,6 @@
 package com.lyh.zookeeper.lock;
 
 import com.lyh.lock.api.Lock;
-import com.lyh.lock.core.ExecutionLockService;
 import com.lyh.zookeeper.config.ZookeeperProperties;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.test.TestingServer;
